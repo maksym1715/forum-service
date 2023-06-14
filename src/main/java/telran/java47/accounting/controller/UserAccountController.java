@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
@@ -45,37 +46,39 @@ public class UserAccountController {
 
 	@DeleteMapping("/user/{login}")
 	public UserDto removeUser( @PathVariable String login) {
-		// TODO Auto-generated method stub
+		
 		return userAccountService.removeUser(login);
 	}
 
 	@PutMapping("/user/{login}")
 	public UserDto updateUser(@PathVariable String login, @RequestBody UserEditDto userEditDto) {
-		// TODO Auto-generated method stub
+		
 		return userAccountService.updateUser(login, userEditDto);
 	}
 	@PutMapping("/user/{login}/role/{role}")
 	public RolesDto addRole(@PathVariable String login,@PathVariable String role) {
-		// TODO Auto-generated method stub
+		
 		return userAccountService.changeRolesList(login, role, true);
 	}
 	
 	@DeleteMapping("/user/{login}/role/{role}")
 	public RolesDto deleteRole(@PathVariable String login,@PathVariable String role) {
-		// TODO Auto-generated method stub
+		
 		return userAccountService.changeRolesList(login, role, false);
 	}
 
-//	@PutMapping("/user/{login}")
-//	public RolesDto changeRolesList(@PathVariable String login, @PathVariable String role) {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
+	@PutMapping("/user/{login}/role/{role}")
+	public RolesDto changeRolesList(
+		    @PathVariable String login,
+		    @PathVariable String role,
+		    @RequestParam(value = "addRole", defaultValue = "true") boolean addRole
+		) {
+		return userAccountService.changeRolesList(login, role, addRole);
+	}
 
 	@PutMapping("/password")
 	public void changePassword(Principal principal, @RequestHeader("X-Password") String newPassword) {
 		if (principal == null) {
-	        // Handle the case when the principal is null
 	        throw new UnauthorizedException("User is not authenticated");
 	    }
 
