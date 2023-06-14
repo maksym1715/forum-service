@@ -28,7 +28,6 @@ public class PostServiceImpl implements PostService {
 	public PostDto addNewPost(String author, NewPostDto newPostDto) {
 		Post post = modelMapper.map(newPostDto, Post.class);
 		post.setAuthor(author);
-
 		Post savedPost = postRepository.save(post);
 		return modelMapper.map(savedPost, PostDto.class);
 	}
@@ -74,6 +73,8 @@ public class PostServiceImpl implements PostService {
 			post.addLike();
 			postRepository.save(post);
 		});
+		
+		
 	}
 
 	@Override
