@@ -67,15 +67,7 @@ public class UserAccountController {
 		return userAccountService.changeRolesList(login, role, false);
 	}
 
-	@PutMapping("/user/{login}/role/{role}")
-	public RolesDto changeRolesList(
-		    @PathVariable String login,
-		    @PathVariable String role,
-		    @RequestParam(value = "addRole", defaultValue = "true") boolean addRole
-		) {
-		return userAccountService.changeRolesList(login, role, addRole);
-	}
-
+	
 	@PutMapping("/password")
 	public void changePassword(Principal principal, @RequestHeader("X-Password") String newPassword) {
 		if (principal == null) {
