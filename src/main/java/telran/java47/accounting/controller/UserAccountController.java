@@ -35,7 +35,6 @@ public class UserAccountController {
 	}
 	
 	public UserDto login(Principal principal) {
-		
 		return userAccountService.getUser(principal.getName());
 	}
 
