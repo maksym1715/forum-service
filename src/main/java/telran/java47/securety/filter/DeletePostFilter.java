@@ -18,6 +18,7 @@ import telran.java47.post.dao.PostRepository;
 import telran.java47.post.model.Post;
 
 import telran.java47.securety.model.User;
+import telran.java47.securety.model.UserRoles;
 
 
 @Component
@@ -39,7 +40,7 @@ public class DeletePostFilter implements Filter {
 			String postId = arr[arr.length - 1];
 			Post post = postRepository.findById(postId).orElse(null);
 			if(post == null || !(user.getName().equals(post.getAuthor())
-					|| user.getRoles().contains("MODERATOR"))) {
+					|| user.getRoles().contains(UserRoles.MODERATOR.name()))) {
 				response.sendError(403);
 				return;
 			}
