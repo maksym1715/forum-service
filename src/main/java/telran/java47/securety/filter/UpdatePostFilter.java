@@ -12,12 +12,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
 import telran.java47.post.dao.PostRepository;
 import telran.java47.post.model.Post;
-import telran.java47.securety.model.HttpMethod;
+
 
 @Component
 @RequiredArgsConstructor

@@ -11,9 +11,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 
-import telran.java47.securety.model.HttpMethod;
+
 import telran.java47.securety.model.User;
 import telran.java47.securety.model.UserRoles;
 
@@ -27,7 +28,7 @@ public class DeleteUserFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) resp;
 		String path = request.getServletPath();
-		if (checkEndPoint(HttpMethod.valueOf(request.getMethod()), path)) {
+		if (checkEndPoint(HttpMethod.resolve(request.getMethod()), path)) {
 			User user = (User) request.getUserPrincipal();
 			String[] arr = path.split("/");
 			String userName = arr[arr.length - 1];

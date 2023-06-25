@@ -16,16 +16,17 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
 import telran.java47.accounting.dao.UserAccountRepository;
 import telran.java47.accounting.model.UserAccount;
 import telran.java47.securety.context.SecurityContext;
-import telran.java47.securety.model.HttpMethod;
+
 import telran.java47.securety.model.RequestHeader;
 import telran.java47.securety.model.User;
-import telran.java47.securety.model.UserRoles;
+
 
 @Component
 @RequiredArgsConstructor
@@ -40,7 +41,7 @@ public class AuthenticationFilter implements Filter {
 			throws IOException, ServletException {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) resp;
-		if (checkEndPoint(HttpMethod.valueOf(request.getMethod()), request.getServletPath())) {
+		if (checkEndPoint(HttpMethod.resolve(request.getMethod()), request.getServletPath())) {
 			String sessionId = request.getSession().getId();
 			User user = securityContext.getUserBySessionId(sessionId);
 			if(user == null) {
