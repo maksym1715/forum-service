@@ -1,7 +1,6 @@
 package telran.java47.securety.filter;
 
 import java.io.IOException;
-import java.security.Principal;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -13,10 +12,19 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+import lombok.RequiredArgsConstructor;
+import telran.java47.post.dao.PostRepository;
+import telran.java47.post.model.Post;
+import telran.java47.securety.model.HttpMethod;
+import telran.java47.securety.model.User;
+import telran.java47.securety.model.UserRoles;
 
 @Component
-@Order(50)
-public class CreatePostFilter implements Filter{
+@RequiredArgsConstructor
+@Order(60)
+public class DeletePostFilter implements Filter {
+
+	final PostRepository postRepository;
 
 	@Override
 	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain)
@@ -24,25 +32,23 @@ public class CreatePostFilter implements Filter{
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) resp;
 		String path = request.getServletPath();
-		if (checkEndPoint(request.getMethod(), path)) {
-			Principal principal = request.getUserPrincipal();
+		if (checkEndPoint(HttpMethod.valueOf(request.getMethod()), path)) {
+			User user = (User) request.getUserPrincipal();
 			String[] arr = path.split("/");
-			String author = arr[arr.length - 1];
-			if (!principal.getName().equalsIgnoreCase(author)) {
+			String postId = arr[arr.length - 1];
+			Post post = postRepository.findById(postId).orElse(null);
+			if(post == null || !(user.getName().equals(post.getAuthor())
+					|| user.getRoles().contains("MODERATOR"))) {
 				response.sendError(403);
 				return;
 			}
 		}
 		chain.doFilter(request, response);
+
 	}
 
-	private boolean checkEndPoint(String method, String path) {
-		if (("POST".equalsIgnoreCase(method) && path.matches("/forum/post/\\w+/?")) ||
-		        ("PUT".equalsIgnoreCase(method) && path.matches("/forum/post/\\d+/comment/\\w+/?")) ||
-		        ("PUT".equalsIgnoreCase(method) && path.matches("/forum/post/\\w+/?"))) {
-			return true;
-		}
-		return false;
+	private boolean checkEndPoint(HttpMethod method, String path) {
+		return method == HttpMethod.DELETE && path.matches("/forum/post/\\w+/?");
 	}
-		
-}	
+
+}

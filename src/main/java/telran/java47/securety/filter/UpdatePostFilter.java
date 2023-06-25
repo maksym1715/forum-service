@@ -1,6 +1,7 @@
 package telran.java47.securety.filter;
 
 import java.io.IOException;
+import java.security.Principal;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -13,13 +14,17 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import lombok.RequiredArgsConstructor;
+import telran.java47.post.dao.PostRepository;
+import telran.java47.post.model.Post;
 import telran.java47.securety.model.HttpMethod;
-import telran.java47.securety.model.User;
-import telran.java47.securety.model.UserRoles;
 
 @Component
-@Order(40)
-public class DeleteUserFilter implements Filter {
+@RequiredArgsConstructor
+@Order(50)
+public class UpdatePostFilter implements Filter {
+	
+	final PostRepository postRepository;
 
 	@Override
 	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain)
@@ -28,11 +33,11 @@ public class DeleteUserFilter implements Filter {
 		HttpServletResponse response = (HttpServletResponse) resp;
 		String path = request.getServletPath();
 		if (checkEndPoint(HttpMethod.valueOf(request.getMethod()), path)) {
-			User user = (User) request.getUserPrincipal();
+			Principal principal = request.getUserPrincipal();
 			String[] arr = path.split("/");
-			String userName = arr[arr.length - 1];
-			if (!(user.getName().equalsIgnoreCase(userName)
-					|| user.getRoles().contains(UserRoles.ADMINISTRATOR.name()))) {
+			String postId = arr[arr.length - 1];
+			Post post = postRepository.findById(postId).orElse(null);
+			if(post == null || !principal.getName().equals(post.getAuthor())) {
 				response.sendError(403);
 				return;
 			}
@@ -42,7 +47,8 @@ public class DeleteUserFilter implements Filter {
 	}
 
 	private boolean checkEndPoint(HttpMethod method, String path) {
-		return method == HttpMethod.DELETE && path.matches("/account/user/\\w+/?");
+		return method == HttpMethod.PUT && path.matches("/forum/post/\\w+/?");
 	}
+
 
 }

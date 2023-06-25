@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @Getter
 @Document(collection = "users")
 public class UserAccount {
@@ -25,28 +24,23 @@ public class UserAccount {
 	Set<String> roles;
 	
 	public UserAccount() {
-        this.roles = new HashSet<>();
-    }
-	
-	
+		roles = new HashSet<>();
+	}
+
 	public UserAccount(String login, String password, String firstName, String lastName) {
+		this();
 		this.login = login;
 		this.password = password;
 		this.firstName = firstName;
 		this.lastName = lastName;
-		roles = new HashSet<>();
 	}
-	
+
 	public boolean addRole(String role) {
 		return roles.add(role);
 	}
-	
+
 	public boolean removeRole(String role) {
 		return roles.remove(role);
 	}
 
-	
-
-	
-	
 }
